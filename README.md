@@ -35,6 +35,14 @@ Capacity is read from the file, with no size setting in the game.
 Keep `.SAV` files out of cartridge assets so updates cannot replace them.
 Save between frames; `saves.status()` explains failures.
 
+## Games using CHSave
+
+- [Tetris](https://github.com/juliendorra/tetris-chgame)
+- [Midnight Pinball](https://github.com/juliendorra/chgame-pinball)
+- [VoidBloom](https://github.com/juliendorra/VoidBloom)
+- [LightDrive](https://github.com/juliendorra/light-drive)
+- [Mystic Balloon](https://github.com/juliendorra/mystic-balloon-chgame)
+
 See [the working example](examples/Settings/Settings.ino) and
 [integration notes](docs/integration.md) for installation, errors and schema changes.
 [Format](docs/format.md) · [Tests](tests/README.md) · [MIT license](LICENSE)
