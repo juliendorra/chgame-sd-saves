@@ -1,4 +1,4 @@
-# CHSave
+# CHSave: SD Saves and settings
 
 On the CHGame, it makes sense to switch the default of the game saved state, scores and settings storage to the SD card: the SD card will probably be always present on the CHGame console, as most game are starting to need it for artwork, levels, etc. 
 
