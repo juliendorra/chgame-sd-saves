@@ -25,7 +25,7 @@ Data data{0, 1, {0, 0, 0}};
 ```
 
 Insert a FAT16/FAT32 SD card. The first save creates the file automatically;
-players have nothing to prepare. Missing saves load the game's defaults.
+Missing saves should load the game's defaults.
 Existing saves are preserved. Initial file size follows the payload, starting
 at 1.5 KB. Payloads can be up to 65,516 bytes; RAM is usually the limit.
 Keep `.SAV` files out of cartridge assets so updates cannot replace them.
