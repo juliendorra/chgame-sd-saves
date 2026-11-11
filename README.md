@@ -1,6 +1,6 @@
 # CHSave: SD Saves and settings
 
-On the CHGame, it makes sense to switch the default of the game saved state, scores and settings storage to the SD card: the SD card will probably be always present on the CHGame console, as most game are starting to need it for artwork, levels, etc. 
+On the CHGame, it makes sense to switch the default storage to the SD card for the game saved state, the scores and the settings: the SD card will probably be always present on the CHGame console, as most game are starting to need it for artwork, levels, etc.
 
 Here is a small lib I use, so all my CHGame games are using a consistent way to save game state and settings.
 
