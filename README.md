@@ -24,15 +24,15 @@ Data data{0, 1, {0, 0, 0}};
 // saves.store(SAVE_ID, 1, data); // check the return value
 ```
 
-Insert a FAT16/FAT32 SD card. The first save creates the file automatically;
-players have nothing to prepare. Missing saves load the game's defaults.
-Existing saves are preserved. Initial file size follows the payload, starting
-at 1.5 KB. Payloads can be up to 65,516 bytes; RAM is usually the limit.
-Keep `.SAV` files out of cartridge assets so updates cannot replace them.
+Insert a FAT16/FAT32 SD card. The first save creates `/SAVES/` and the game's
+file automatically. Missing saves load the game's defaults. Initial file size
+follows the payload, starting at 1.5 KB.
 Save between frames; `saves.status()` explains failures.
 
 Filenames use eight base-36 characters (`0–9`, `A–Z`). The full ID is checked
 before writing, so a hash collision cannot overwrite another app's data.
+When upgrading from CHSave 0.4 or earlier, copy existing hashed `.SAV` files
+from the card root into `/SAVES/` before playing the new build.
 
 ## Games using CHSave
 
