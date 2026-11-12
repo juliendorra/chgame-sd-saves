@@ -1,8 +1,8 @@
 # CHSave
 
 SD saves and settings for [CHGame](https://github.com/bateske/CHGame).
-Each save file has a reverse-domain ID and a hashed `.SAV` filename.
-Two records, CRC checks and verified writes protect the previous save.
+Each save file use your unique reverse-domain ID to create hashed `.SAV` filenames, so saves never collides.
+It uses twin records, CRC checks and verified writes to protect the previous save.
 
 Install CHSave and the included `extras/CHSd` as Arduino libraries alongside CHGfx:
 
@@ -26,6 +26,7 @@ We recommend calling `saves.store()` between frames when your game needs to save
 
 The default save size is **492 bytes of game data per file**. The file takes
 three 512-byte sectors on the card, one for the ID and one for each recovery record.
+
 One `Store` can use several fixed IDs for data you save independently.
 Pinball uses two IDs for 48 board scores each.
 
@@ -34,7 +35,7 @@ Add `--build-property 'build.extra_flags=-DCHSAVE_MAX_SECTORS_PER_RECORD=2'`
 to `arduino-cli compile`.
 
 Filenames use eight base-36 characters (`0–9`, `A–Z`). The full ID is checked
-before writing, so a hash collision cannot overwrite another app's data.
+before writing inside the record itself, so a hash collision cannot overwrite another app's data.
 
 ## Games using CHSave
 
