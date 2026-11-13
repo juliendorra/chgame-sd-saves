@@ -9,6 +9,8 @@ CHSave uses more firmware space than the built-in flash save API.
 
 Install CHSave and the included `extras/CHSd` as Arduino libraries alongside
 CHGfx. Use the included CHSd in place of the stock CHSd.
+CHSave selects the compact writer by default. CHSd's general writer is
+available separately for games that create larger files.
 
 ```cpp
 #include <CHSave.h>
