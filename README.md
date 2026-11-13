@@ -4,8 +4,10 @@ SD saves and settings for [CHGame](https://github.com/bateske/CHGame).
 Each save has a stable reverse-domain ID and a hashed `.SAV` filename.
 Two records, CRC checks and verified writes protect the previous save.
 
-Games that load artwork or levels from SD can keep their saves on the same card.
-CHSave uses more firmware space than the built-in flash save API.
+It makes sense for games that load artwork or levels from SD to keep their saves on the same card.
+But it is also a good solution for all CHGame games, as it allows bigger save records and avoid collision by using hashed  reverse-domain IDs.
+
+Trade-off: CHSave uses more firmware space for its code than the built-in flash save API.
 
 Install CHSave and the included `extras/CHSd` as Arduino libraries alongside
 CHGfx. Use the included CHSd in place of the stock CHSd.
