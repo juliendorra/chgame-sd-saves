@@ -7,7 +7,8 @@ Two records, CRC checks and verified writes protect the previous save.
 It makes sense for games that load artwork or levels from SD to keep their saves on the same card.
 But it is also a good solution for all CHGame games, as it allows bigger save records and avoid collision by using hashed  reverse-domain IDs.
 
-Trade-off: CHSave uses more firmware space for its code than the built-in flash save API.
+CHSave uses more firmware space than the built-in flash save API, and frees
+the two 256-byte flash pages needed for alternating flash saves.
 
 Install CHSave and [CHSd Extended](extras/CHSd) as Arduino libraries
 alongside CHGfx. CHSd Extended replaces the stock `CHSd` library and keeps
@@ -49,22 +50,30 @@ the existing file.
 
 ## Rev0 firmware size
 
-Total firmware size for the same test sketch, built with GCC 16.2 and
-`-Os` with LTO. The difference is measured against stock CHSd.
+Total Rev0 firmware image size for the same asset-reading sketch, built
+with GCC 16.2 and `-Os` with LTO. Differences use the asset-only build as
+the baseline. The save rows call `store()` unless marked otherwise.
 
 | Configuration | Capabilities | Firmware | Difference |
 | --- | --- | ---: | ---: |
-| Stock CHSd | FAT16/FAT32 asset reads | 6,800 B | — |
+| Stock CHSd, no saves | FAT16/FAT32 asset reads | 6,800 B | — |
+| Stock CHSd + SDK flash saves | Up to 244 B of game data | 7,684 B | +884 B |
+| Stock CHSd + SDK flash saves, load and store | Up to 244 B of game data | 7,864 B | +1,064 B |
 | CHSd Extended, read-only | Same asset reads | 6,988 B | +188 B |
 | CHSd Extended + raw writes | Write a 512-byte sector by address, as used by the Pinball Studio web editor | 7,116 B | +316 B |
 | CHSd Extended + file creation | `fat::createFile()` creates FAT files of variable size | 9,620 B | +2,820 B |
 | CHSd Extended + CHSave, default | [Three-sector save files](#why-three-sectors), up to 492 B of game data each | 10,928 B | +4,128 B |
+| CHSd Extended + CHSave, default, load and store | Up to 492 B of game data per save | 11,232 B | +4,432 B |
 | CHSd Extended + CHSave, two sectors per record | Up to 1,004 B of game data per save | 11,352 B | +4,552 B |
 | CHSd Extended + compact CHSave + file creation | 492 B saves and general FAT file creation | 11,508 B | +4,708 B |
 | CHSd Extended + CHSave, 128 sectors per record | Up to 65,516 B of game data per save | 11,640 B | +4,840 B |
 
-The linker drops unused write and allocation code. Compact saves and general
-file creation share mounting, directory handling, and write verification.
+For load and store, compact CHSave adds **3,368 B** over SDK flash saves.
+Alternating flash saves reserve 512 B outside the firmware image, so the
+difference in space available for game code is **2,856 B**. The linker drops
+the unused SDK flash-save code and unused SD write and allocation code.
+Compact saves and general file creation share mounting, directory handling,
+and write verification.
 
 [Pinball Studio](https://juliendorra.com/chgame-pinball/) handles FAT allocation
 in the browser when saving a custom board. It sends each sector address and its
