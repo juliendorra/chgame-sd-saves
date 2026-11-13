@@ -50,12 +50,14 @@ the existing file.
 
 ## Rev0 firmware size
 
-Total Rev0 firmware image size for the same asset-reading sketch, built
-with GCC 16.2 and `-Os` with LTO. Differences use the asset-only build as
-the baseline. The save rows call `store()` unless marked otherwise.
+Total Rev0 firmware image size for the same test sketch, built with GCC 16.2
+and `-Os` with LTO. Differences use the stock CHSd asset-only build as the
+baseline. Every row reads SD assets except the SDK flash-only build. The save
+rows call `store()` unless marked otherwise.
 
 | Configuration | Capabilities | Firmware | Difference |
 | --- | --- | ---: | ---: |
+| SDK flash saves only, load and store | Up to 244 B of game data, no SD asset reads | 6,252 B | −548 B |
 | Stock CHSd, no saves | FAT16/FAT32 asset reads | 6,800 B | — |
 | Stock CHSd + SDK flash saves | Up to 244 B of game data | 7,684 B | +884 B |
 | Stock CHSd + SDK flash saves, load and store | Up to 244 B of game data | 7,864 B | +1,064 B |
@@ -68,7 +70,8 @@ the baseline. The save rows call `store()` unless marked otherwise.
 | CHSd Extended + compact CHSave + file creation | 492 B saves and general FAT file creation | 11,508 B | +4,708 B |
 | CHSd Extended + CHSave, 128 sectors per record | Up to 65,516 B of game data per save | 11,640 B | +4,840 B |
 
-For load and store, compact CHSave adds **3,368 B** over SDK flash saves.
+With SD asset reads in both builds, compact CHSave load and store adds
+**3,368 B** over SDK flash saves.
 Alternating flash saves reserve 512 B outside the firmware image, so the
 difference in space available for game code is **2,856 B**. The linker drops
 the unused SDK flash-save code and unused SD write and allocation code.
