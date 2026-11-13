@@ -214,7 +214,7 @@ class Allocator {
         b[offset] = 0xe5;
         if (!write(sector)) return E_WRITE;
         b[offset] = name[0];
-        return write(sector) ? OK : E_WRITE;
+        return write(sector) ? int8_t(OK) : E_WRITE;
     }
     int8_t makeDirectory(const char *name, uint32_t &parent) {
         uint32_t sector; unsigned offset;
