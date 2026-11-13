@@ -51,32 +51,33 @@ the existing file.
 ## Rev0 firmware size
 
 Total Rev0 firmware image size for the same test sketch, built with GCC 16.2
-and `-Os` with LTO. Differences use the stock CHSd asset-only build as the
-baseline. Every row reads SD assets except the SDK flash-only build. The save
-rows call `store()` unless marked otherwise.
+and `-Os` with LTO. The baseline is SDK flash load and store with SD asset
+reads disabled. Save rows call `store()` unless marked otherwise.
 
-| Configuration | Capabilities | Firmware | Difference |
+| Configuration | Capabilities | Firmware | vs. SDK flash baseline |
 | --- | --- | ---: | ---: |
-| SDK flash saves only, load and store | Up to 244 B of game data, no SD asset reads | 6,252 B | −548 B |
-| Stock CHSd, no saves | FAT16/FAT32 asset reads | 6,800 B | — |
-| Stock CHSd + SDK flash saves | Up to 244 B of game data | 7,684 B | +884 B |
-| Stock CHSd + SDK flash saves, load and store | Up to 244 B of game data | 7,864 B | +1,064 B |
-| CHSd Extended, read-only | Same asset reads | 6,988 B | +188 B |
-| CHSd Extended + raw writes | Write a 512-byte sector by address, as used by the Pinball Studio web editor | 7,116 B | +316 B |
-| CHSd Extended + file creation | `fat::createFile()` creates FAT files of variable size | 9,620 B | +2,820 B |
-| CHSd Extended + CHSave, default | [Three-sector save files](#why-three-sectors), up to 492 B of game data each | 10,928 B | +4,128 B |
-| CHSd Extended + CHSave, default, load and store | Up to 492 B of game data per save | 11,232 B | +4,432 B |
-| CHSd Extended + CHSave, two sectors per record | Up to 1,004 B of game data per save | 11,352 B | +4,552 B |
-| CHSd Extended + compact CHSave + file creation | 492 B saves and general FAT file creation | 11,508 B | +4,708 B |
-| CHSd Extended + CHSave, 128 sectors per record | Up to 65,516 B of game data per save | 11,640 B | +4,840 B |
+| No saves or SD asset reads | CHGame and graphics setup | 5,340 B | −912 B |
+| SDK flash saves only, load and store | Up to 244 B of game data, no SD asset reads | 6,252 B | Baseline |
+| Stock CHSd, no saves | FAT16/FAT32 asset reads | 6,800 B | +548 B |
+| Stock CHSd + SDK flash saves | Up to 244 B of game data | 7,684 B | +1,432 B |
+| Stock CHSd + SDK flash saves, load and store | Up to 244 B of game data | 7,864 B | +1,612 B |
+| CHSd Extended, read-only | Same asset reads | 6,988 B | +736 B |
+| CHSd Extended + raw writes | Write a 512-byte sector by address, as used by the Pinball Studio web editor | 7,116 B | +864 B |
+| CHSd Extended + file creation | `fat::createFile()` creates FAT files of variable size | 9,620 B | +3,368 B |
+| CHSd Extended + CHSave, default, load and store without SD asset reads | Up to 492 B of game data per save | 10,828 B | +4,576 B |
+| CHSd Extended + CHSave, default | [Three-sector save files](#why-three-sectors), up to 492 B of game data each | 10,928 B | +4,676 B |
+| CHSd Extended + CHSave, default, load and store | Up to 492 B of game data per save | 11,232 B | +4,980 B |
+| CHSd Extended + CHSave, two sectors per record | Up to 1,004 B of game data per save | 11,352 B | +5,100 B |
+| CHSd Extended + compact CHSave + file creation | 492 B saves and general FAT file creation | 11,508 B | +5,256 B |
+| CHSd Extended + CHSave, 128 sectors per record | Up to 65,516 B of game data per save | 11,640 B | +5,388 B |
 
-With SD asset reads in both builds, compact CHSave load and store adds
-**3,368 B** over SDK flash saves.
+SDK flash load and store add **912 B** to the build without saves or SD
+asset reads. Compact CHSave load and store add **4,576 B** over SDK flash saves
+without SD asset reads, or **3,368 B** with asset reads in both builds.
 Alternating flash saves reserve 512 B outside the firmware image, so the
-difference in space available for game code is **2,856 B**. The linker drops
-the unused SDK flash-save code and unused SD write and allocation code.
-Compact saves and general file creation share mounting, directory handling,
-and write verification.
+respective differences in space available for game code are **4,064 B**
+and **2,856 B**. The linker drops unused SDK flash-save code and unused SD
+write and allocation code.
 
 [Pinball Studio](https://juliendorra.com/chgame-pinball/) handles FAT allocation
 in the browser when saving a custom board. It sends each sector address and its
