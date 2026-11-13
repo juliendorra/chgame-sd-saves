@@ -1,7 +1,7 @@
-# CHSd with writes
+# CHSd Extended
 
 A drop-in fork of CHGame's CHSd. Install it as the Arduino `CHSd` library
-in place of the SDK copy, or pass `--library /path/to/chgame-chsd` to
+in place of the SDK copy, or pass `--library /path/to/chgame-sd-saves/extras/CHSd` to
 Arduino CLI. Existing `Fat.h` and `SdSpi.h` callers keep the same API.
 
 CHSave uses `FatWrite.h` to create files on FAT16/FAT32 and `SdWrite.h`

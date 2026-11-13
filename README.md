@@ -9,10 +9,9 @@ But it is also a good solution for all CHGame games, as it allows bigger save re
 
 Trade-off: CHSave uses more firmware space for its code than the built-in flash save API.
 
-Install CHSave and the included `extras/CHSd` as Arduino libraries alongside
-CHGfx. Use the included CHSd in place of the stock CHSd.
-CHSave selects the compact writer by default. CHSd's general writer is
-available separately for games that create larger files.
+Install CHSave and [CHSd Extended](extras/CHSd) as Arduino libraries
+alongside CHGfx. CHSd Extended replaces the stock `CHSd` library and keeps
+its asset-reading API. CHSave uses the compact writer by default.
 
 ```cpp
 #include <CHSave.h>
@@ -48,6 +47,29 @@ Filenames use eight base-36 characters (`0–9`, `A–Z`). CHSave checks the ful
 ID in the file's first sector. A mismatch returns `IdCollision` and preserves
 the existing file.
 
+## Rev0 firmware size
+
+Total firmware size for the same test sketch, built with GCC 16.2 and
+`-Os` with LTO. The difference is measured against stock CHSd.
+
+| Configuration | Capabilities | Firmware | Difference |
+| --- | --- | ---: | ---: |
+| Stock CHSd | FAT16/FAT32 asset reads | 6,800 B | — |
+| CHSd Extended, read-only | Same asset reads | 6,988 B | +188 B |
+| CHSd Extended + raw writes | Write a 512-byte sector by address, as used by the Pinball Studio web editor | 7,116 B | +316 B |
+| CHSd Extended + file creation | `fat::createFile()` creates FAT files of variable size | 9,620 B | +2,820 B |
+| CHSd Extended + CHSave, default | [Three-sector save files](#why-three-sectors), up to 492 B of game data each | 10,928 B | +4,128 B |
+| CHSd Extended + CHSave, two sectors per record | Up to 1,004 B of game data per save | 11,352 B | +4,552 B |
+| CHSd Extended + compact CHSave + file creation | 492 B saves and general FAT file creation | 11,508 B | +4,708 B |
+| CHSd Extended + CHSave, 128 sectors per record | Up to 65,516 B of game data per save | 11,640 B | +4,840 B |
+
+The linker drops unused write and allocation code. Compact saves and general
+file creation share mounting, directory handling, and write verification.
+
+[Pinball Studio](https://juliendorra.com/chgame-pinball/) handles FAT allocation
+in the browser when saving a custom board. It sends each sector address and its
+512 bytes over USB, and the console writes them with `sd::write()`.
+
 ## Games using CHSave
 
 All five use the default of [one sector per record](src/Config.h#L4-L9).
@@ -61,3 +83,17 @@ All five use the default of [one sector per record](src/Config.h#L4-L9).
 See [the working example](examples/Settings/Settings.ino) and
 [integration notes](docs/integration.md) for installation, errors and schema changes.
 [Format](docs/format.md) · [Tests](tests/README.md) · [MIT license](LICENSE)
+
+## Why three sectors?
+
+A compact save file uses three 512-byte sectors. One stores the save’s
+identity and two hold save records.
+
+| Sector | What it holds |
+| --- | --- |
+| 1 | The full reverse-domain ID, so CHSave can verify which game owns the file even if two IDs hash to the same filename |
+| 2 | Save record A |
+| 3 | Save record B |
+
+CHSave alternates writes between records A and B so an interrupted write leaves
+the previous record available.
